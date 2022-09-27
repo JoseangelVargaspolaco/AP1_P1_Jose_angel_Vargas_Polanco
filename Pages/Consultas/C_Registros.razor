@@ -1,0 +1,50 @@
+@page "/registros"
+@inject RegistrosBLL registrosBLL
+
+<EditForm Model="registros">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header text-center">
+            <h3>Consulta Registros</h3>
+
+        </div>
+
+        <div class="card-body">
+            <form>
+                <div class="form-group text-center">
+
+                   <button type="button" class="bi bi-person-workspace btn btn-lg btn-info" @onclick="Buscar"> Generar Tabla Ocupaciones</button>
+
+                </div>
+            </form>
+        </div>
+        <table class="table table-secondary">
+            <thead class="thead-dark">
+                <tr class="table-info">
+                    <th>RegistroId</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Registros registros in ListaRegistro)
+                {
+                    <tr>
+                        <td>@registros.RegistroId</td>
+                        <td><a href="registros/@registros.RegistroId">Ver</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</EditForm>
+
+@code {
+
+    public Registros registros { set; get; } = new Registros();
+    public List<Registros> ListaRegistro { get; set; } = new List<Registros>();
+    public void Buscar()
+    {
+        ListaRegistro = registrosBLL.GetRegistros(o => true);
+    }
+
+}
