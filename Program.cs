@@ -21,6 +21,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<Aportes>();
 
 app.UseHttpsRedirection();
 
