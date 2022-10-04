@@ -39,12 +39,11 @@ namespace AP1_P1_Jose_angel_Vargas_Polanco.BLL
             else
                 return this.Modificar(aportes);
         }
-
         public bool Eliminar(Aportes aportes){
             _contexto.Entry(aportes).State = EntityState.Deleted;
             return _contexto.SaveChanges() > 0;
         }
-
+        
         public Aportes? Buscar(int aportesId){
             return _contexto.Aportes
                     .Where(o=> o.AporteId == aportesId)

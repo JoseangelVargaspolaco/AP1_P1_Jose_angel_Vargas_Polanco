@@ -1,7 +1,7 @@
-@page "/registros"
+@page "/consutaAportes"
 @inject AportesBLL aportesBLL
 
-<EditForm Model="registros">
+<EditForm Model="consutaAportes">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <DataAnnotationsValidator />
     <div class="card">
@@ -14,37 +14,68 @@
             <form>
                 <div class="form-group text-center">
 
-                   <button type="button" class="bi bi-person-workspace btn btn-lg btn-info" @onclick="Buscar"> Generar Tabla Ocupaciones</button>
+                   <button type="button" class="bi bi-person-workspace btn btn-lg btn-info" @onclick="Buscar"> Buscar</button>
 
                 </div>
+
             </form>
         </div>
         <table class="table table-secondary">
             <thead class="thead-dark">
+                <tr class="card-from text-center">
+                    <th>hasta</th>
+                    <th>Desde</th>
+                </tr>
+               
                 <tr class="table-info">
                     <th>RegistroId</th>
+                    <th>Persona</th>
+                    <th>Monto</th>
+                    <th>Ver</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (Registros registros in ListaRegistro)
+                @foreach (Aportes aportes in ListaAportes)
                 {
                     <tr>
-                        <td>@registros.RegistroId</td>
-                        <td><a href="registros/@registros.RegistroId">Ver</a></td>
+                        <td>@aportes.AporteId</td>
+                        <td>@aportes.Persona</td>
+                        <td>@aportes.Monto</td>
+                        <td><a href="aportes/@aportes.AporteId">Ver</a></td>
                     </tr>
                 }
+                
+                @foreach (Aportes aportes in ListaAportes)
+                {
+                    <tr>
+                        <td>@aportes.Fecha</td>
+                        <td>@aportes.Fecha</td>
+                    </tr>
+                }
+             
+                <tr class="card-from text-center">
+                    <th>Conteo</th>
+                    <th>Total</th>
+                </tr>
+
+                @foreach (Aportes aportes in ListaAportes)
+                {
+                    <tr>
+                        <td>@aportes.Monto</td>
+                    </tr>
+                }
+
             </tbody>
         </table>
     </div>
 </EditForm>
 
 @code {
-
-    public Aportes aportes { set; get; } = new Aportes();
-    public List<Aportes> ListAportes { get; set; } = new List<Aportes>();
+    public Aportes consutaAportes { set; get; } = new Aportes();
+    public List<Aportes> ListaAportes { get; set; } = new List<Aportes>();
     public void Buscar()
     {
-        ListaRegistro = registrosBLL.GetRegistros(o => true);
+        ListaAportes = aportesBLL.GetAportes(o => true);
     }
 
 }
