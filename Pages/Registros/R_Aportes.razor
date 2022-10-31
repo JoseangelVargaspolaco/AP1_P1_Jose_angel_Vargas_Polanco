@@ -75,7 +75,6 @@
     [Parameter]
     public int AporteId { get; set; }
     public Aportes aportes { get; set; } = new Aportes();
-    public String mensaje { get; set; } = "";
 
     protected override void OnInitialized()
     {
@@ -92,21 +91,8 @@
         aportes.Fecha = DateTime.Now;
     }
 
-    public bool Validar()
-    {
-        if(aportes.AporteId == aportes.AporteId)
-        {
-            return false;
-        }else{
-            return true;
-        }
-    }
     public void Guardar()
     {
-        if(!Validar())
-        {
-            notifications.ShowNotification("No fue guardado, intentar nuevamente.", NotificationSeverity.Error);
-        }
 
         bool guardo = aportesBLL.Guardar(aportes);
 

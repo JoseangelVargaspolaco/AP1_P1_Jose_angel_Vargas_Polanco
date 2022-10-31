@@ -1,69 +1,90 @@
-@page "/consutaAportes"
+@page "/aporte"
 @inject AportesBLL aportesBLL
 
-<EditForm Model="consutaAportes">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+<EditForm Model="aporte">
     <DataAnnotationsValidator />
     <div class="card">
         <div class="card-header text-center">
             <h3>Consulta Registros</h3>
-
         </div>
 
-        <div class="card-body">
-            <form>
-                <div class="form-group text-center">
-
-                   <button type="button" class="bi bi-person-workspace btn btn-lg btn-info" @onclick="Buscar"> Buscar</button>
-
+        <div class="row gy-3 container overflow-hidden">
+            <div class="col-md-3">
+                <label>Desde</label>
+                <div class="mb-3">
+                    <InputDate @bind-Value="Desde" class="form-control" />
+                    <ValidationMessage For="@(() => Desde)" />
                 </div>
-
-            </form>
-        </div>
-        <table class="table table-secondary">
-            <thead class="thead-dark">
-                <tr class="card-from text-center">
-                    <th>hasta</th>
-                    <th>Desde</th>
-                </tr>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Hasta</label>
+                    <div class="input-group">
+                        <InputDate @bind-Value="Hasta" class="form-control" />
+                        <ValidationMessage For="@(() => Hasta)" />
+                        <div class="input-group-append">
+                            <button type="button" class="input-group-text btn btn-primary" @onclick="fechabuscar"> <i
+                                    class="oi oi-magnifying-glass" /> Generar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
                
-                <tr class="table-info">
-                    <th>RegistroId</th>
+        </div>
+
+
+        <form class="input-group align-items-end card-body">
+            <div class="container overflow-hidden">
+                <div class="row gy-3">
+                    <div class="col-md-6">
+                        <label>Filtro</label>
+                        <select class="form-control" @bind="Filtro">
+                            <option value="1">AporteId</option>
+                            <option value="2">Persona</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Buscar</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" @bind="Criterio" />
+                                <div class="input-group-append">
+                                    <button type="button" class="input-group-text btn btn-primary" @onclick="Buscar"> <i
+                                            class="oi oi-magnifying-glass" /></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <table class="table border border-3">
+            <thead class="text-White cod-md-2">
+                <tr>
+                    <th>AporteId</th>
                     <th>Persona</th>
                     <th>Monto</th>
                     <th>Ver</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (Aportes aportes in ListaAportes)
+                @foreach (var aporte in listaAportes)
                 {
                     <tr>
-                        <td>@aportes.AporteId</td>
-                        <td>@aportes.Persona</td>
-                        <td>@aportes.Monto</td>
-                        <td><a href="aportes/@aportes.AporteId">Ver</a></td>
+                        <td>@aporte.AporteId</td>
+                        <td>@aporte.Persona</td>
+                        <td>@aporte.Monto</td>
+                        <td><a href="aporte/@aporte.AporteId">Ver</a></td>
                     </tr>
+                    total += aporte.Monto;
                 }
-                
-                @foreach (Aportes aportes in ListaAportes)
-                {
-                    <tr>
-                        <td>@aportes.Fecha</td>
-                        <td>@aportes.Fecha</td>
-                    </tr>
-                }
-             
-                <tr class="card-from text-center">
-                    <th>Conteo</th>
-                    <th>Total</th>
-                </tr>
 
-                @foreach (Aportes aportes in ListaAportes)
-                {
-                    <tr>
-                        <td>@aportes.Monto</td>
-                    </tr>
-                }
+                <tr class="col-md-2">
+                    <td>Contador = @count</td>
+                    <td>Total = @total</td>
+                </tr>
 
             </tbody>
         </table>
@@ -71,11 +92,42 @@
 </EditForm>
 
 @code {
-    public Aportes consutaAportes { set; get; } = new Aportes();
-    public List<Aportes> ListaAportes { get; set; } = new List<Aportes>();
+    public string Filtro { get; set; } = "";
+    public string Criterio { get; set; } = "";
+    public int count = 0;
+    public double? total = 0;
+    public DateTime Desde { get; set; } = DateTime.Now;
+    public DateTime Hasta { get; set; } = DateTime.Now;
+    public Aportes aporte { get; set; } = new Aportes();
+    public List<Aportes> listaAportes { get; set; } = new List<Aportes>();
+
     public void Buscar()
     {
-        ListaAportes = aportesBLL.GetAportes(o => true);
+        listaAportes = aportesBLL.GetAportes(o => true);
+        count = listaAportes.Count();
+        if (Criterio != null)
+        {
+            switch (Filtro)
+            {
+                case "1":
+                    listaAportes = aportesBLL.GetAportes(o => o.AporteId.ToString() == (Criterio));
+                    count = listaAportes.Count();
+                    break;
+                case "2":
+                    listaAportes = aportesBLL.GetAportes(o => o.Persona!.ToLower().Contains(Criterio.ToLower()));
+                    count = listaAportes.Count();
+                    break;
+            }
+        }
+        else
+        {
+            listaAportes = aportesBLL.GetAportes(o => true);
+        }
     }
 
+    public void fechabuscar()
+    {
+        listaAportes = aportesBLL.GetAportes(o => (o.Fecha >= Desde) && (o.Fecha <= Hasta));
+        count = listaAportes.Count();
+    }
 }
